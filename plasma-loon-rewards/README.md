@@ -4,6 +4,12 @@
 
 `https://pay-tasks.prod.plasma-one.tech/api/v1/user/rewards/primaryCashBack`
 
+## 兼容性
+
+- 按 Loon 3.5.0 的官方插件/脚本格式编写。
+- 插件不再声明不存在的更高版本要求。
+- `.lpx` 中的 `script-path` 使用完整的 GitHub Raw URL，Loon 可直接下载并执行远程 JS。
+
 ## 功能
 
 - 读取响应 JSON，不修改原响应。
@@ -25,17 +31,20 @@
 ## 文件
 
 - `Plasma_Rewards_Tracker.lpx`：Loon 插件入口
-- `plasma_rewards.js`：抓取和统计脚本
+- `plasma_rewards.js`：远程执行脚本
 
 ## 安装
 
-在 Loon 中通过插件 URL 导入 `Plasma_Rewards_Tracker.lpx`。
+在 Loon 中通过下面的 Raw URL 导入：
 
-插件已经包含：
+`https://raw.githubusercontent.com/Sukewarm/Scriptunlock/main/plasma-loon-rewards/Plasma_Rewards_Tracker.lpx`
 
-- `primaryCashBack` 的 `http-response` 规则
+插件包含：
+
+- `primaryCashBack` 的 `http-response` 脚本
 - `requires-body=true`
 - `pay-tasks.prod.plasma-one.tech` MITM hostname
+- 一个手动“查看 Plasma 奖励”的 `generic` 脚本
 
 启用后，需要保证 Loon 的 MITM 证书正常生效，脚本才能读取 HTTPS 响应 Body。
 
