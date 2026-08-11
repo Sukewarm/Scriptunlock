@@ -24,12 +24,12 @@
 
 ## 文件
 
-- `Plasma_Rewards_Tracker.plugin`：Loon 插件入口
+- `Plasma_Rewards_Tracker.lpx`：Loon 插件入口
 - `plasma_rewards.js`：抓取和统计脚本
 
 ## 安装
 
-在 Loon 中通过插件 URL 导入 `Plasma_Rewards_Tracker.plugin`。
+在 Loon 中通过插件 URL 导入 `Plasma_Rewards_Tracker.lpx`。
 
 插件已经包含：
 
