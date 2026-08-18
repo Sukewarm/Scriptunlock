@@ -1,19 +1,30 @@
 // CTExcel UK £1 top-up frontend patch for Loon
-// Only modifies the minimum top-up amount in the target JavaScript response.
-// No personal data, account data, phone numbers, tokens, or request bodies are collected or stored.
+// Modifies only the client-side minimum top-up amount from £5 to £1.
+// No personal data, phone numbers, account data, tokens, or request bodies are collected or stored.
 
 let body = $response.body || "";
+let changed = false;
 
-const exactOld = 'Number(r.ruleForm.otherAmount)<5&&(r.ruleForm.otherAmount=5)';
-const exactNew = 'Number(r.ruleForm.otherAmount)<1&&(r.ruleForm.otherAmount=1)';
+const oldText = 'Number(r.ruleForm.otherAmount)<5&&(r.ruleForm.otherAmount=5)';
+const newText = 'Number(r.ruleForm.otherAmount)<1&&(r.ruleForm.otherAmount=1)';
 
-if (body.includes(exactOld)) {
-  body = body.replace(exactOld, exactNew);
+if (body.includes(oldText)) {
+  body = body.replace(oldText, newText);
+  changed = true;
 } else {
-  // Fallback for minor minifier/variable-name changes while keeping the scope narrow.
+  const before = body;
   body = body.replace(
-    /Number\(([^)]+\.otherAmount)\)<5&&\(\1=5\)/g,
+    /Number\(([^)]*?\.otherAmount)\)<5&&\(\1=5\)/g,
     'Number($1)<1&&($1=1)'
+  );
+  changed = body !== before;
+}
+
+if (typeof $notification !== 'undefined') {
+  $notification.post(
+    'CTExcel £1 Top-up',
+    changed ? 'Patch applied' : 'Patch did not match',
+    changed ? 'Minimum amount changed from £5 to £1.' : 'The CTExcel JS loaded, but the expected code was not found.'
   );
 }
 
