@@ -20,11 +20,11 @@ if (body.includes(oldText)) {
   changed = body !== before;
 }
 
-if (typeof $notification !== 'undefined') {
+if (changed && typeof $notification !== 'undefined') {
   $notification.post(
     'CTExcel £1 Top-up',
-    changed ? 'Patch applied' : 'Patch did not match',
-    changed ? 'Minimum amount changed from £5 to £1.' : 'The CTExcel JS loaded, but the expected code was not found.'
+    'Patch applied',
+    'Minimum amount changed from £5 to £1.'
   );
 }
 
