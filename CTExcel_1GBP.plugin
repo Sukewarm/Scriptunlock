@@ -1,6 +1,5 @@
-#!name=CTExcel UK £1 Top-up
-#!desc=Changes the CTExcel UK web top-up frontend minimum from £5 to £1. Does not collect or store personal data.
-#!version=1.0.3
+#!name=CTExcel UK £1 Top-up v1.0.4
+#!desc=v1.0.4 · Changes the CTExcel UK web top-up frontend minimum from £5 to £1. Does not collect or store personal data.
 #!author=Sukewarm
 #!homepage=https://github.com/Sukewarm/Scriptunlock
 
