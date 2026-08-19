@@ -1,10 +1,13 @@
-#!name=CTExcel UK £1 Top-up v1.0.6
-#!desc=v1.0.6 · Changes the CTExcel UK web top-up frontend minimum from £5 to £1. Notifies only when the patch is actually applied. Does not collect or store personal data.
+#!name=CTExcel UK Custom Top-up v1.1.0
+#!desc=v1.1.0 · Lets you set the CTExcel UK web top-up minimum directly in Loon. Default £1. Notifies only when the patch is actually applied. Does not collect or store personal data.
 #!author=Sukewarm
 #!homepage=https://github.com/Sukewarm/Scriptunlock
 
+[Argument]
+min_amount = input,"1",tag=最低充值金额 (£),desc=请输入 1-500 的整数；默认值为 1。
+
 [Script]
-http-response ^https:\/\/www\.ctexcel\.com\/uk\/js\/.*\.js(?:\?.*)?$ script-path=https://raw.githubusercontent.com/Sukewarm/Scriptunlock/main/CTExcel_1GBP.js,timeout=10,requires-body=true,max-size=-1,tag=CTExcel £1 Top-up v1.0.6,enable=true
+http-response ^https:\/\/www\.ctexcel\.com\/uk\/js\/.*\.js(?:\?.*)?$ script-path=https://raw.githubusercontent.com/Sukewarm/Scriptunlock/main/CTExcel_1GBP.js,timeout=10,requires-body=true,max-size=-1,tag=CTExcel Custom Top-up v1.1.0,argument=[{min_amount}],enable=true
 
 [MITM]
 hostname = www.ctexcel.com
