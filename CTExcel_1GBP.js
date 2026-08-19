@@ -1,30 +1,62 @@
-// CTExcel UK £1 top-up frontend patch for Loon
-// Modifies only the client-side minimum top-up amount from £5 to £1.
+// CTExcel UK configurable top-up frontend patch for Loon
+// Changes only the client-side minimum top-up amount.
 // No personal data, phone numbers, account data, tokens, or request bodies are collected or stored.
 
-let body = $response.body || "";
-let changed = false;
+function readMinimumAmount() {
+  let raw = null;
 
-const oldText = 'Number(r.ruleForm.otherAmount)<5&&(r.ruleForm.otherAmount=5)';
-const newText = 'Number(r.ruleForm.otherAmount)<1&&(r.ruleForm.otherAmount=1)';
+  try {
+    if (typeof $argument !== "undefined") raw = $argument;
+  } catch (_) {}
 
-if (body.includes(oldText)) {
-  body = body.replace(oldText, newText);
-  changed = true;
-} else {
-  const before = body;
-  body = body.replace(
-    /Number\(([^)]*?\.otherAmount)\)<5&&\(\1=5\)/g,
-    'Number($1)<1&&($1=1)'
-  );
-  changed = body !== before;
+  let value = null;
+
+  if (raw && typeof raw === "object") {
+    value = raw.min_amount;
+  } else if (typeof raw === "string") {
+    const text = raw.trim();
+
+    // Support a plain value such as "1".
+    if (/^\d+$/.test(text)) {
+      value = text;
+    } else {
+      // Also support key-value argument strings such as "min_amount=1".
+      text.split("&").forEach((pair) => {
+        const index = pair.indexOf("=");
+        if (index < 0) return;
+        const key = decodeURIComponent(pair.slice(0, index).trim());
+        const val = decodeURIComponent(pair.slice(index + 1).trim());
+        if (key === "min_amount") value = val;
+      });
+    }
+  }
+
+  const parsed = Number.parseInt(String(value ?? "1"), 10);
+  if (!Number.isFinite(parsed)) return 1;
+
+  // The CTExcel page itself caps the custom top-up field at £500.
+  return Math.min(500, Math.max(1, parsed));
 }
 
-if (changed && typeof $notification !== 'undefined') {
+const minAmount = readMinimumAmount();
+let body = $response.body || "";
+const before = body;
+
+// Match the original CTExcel blur handler that forces values below £5 back to £5.
+body = body.replace(
+  /Number\(([^)]*?\.otherAmount)\)\s*<\s*5\s*&&\s*\(\s*\1\s*=\s*5\s*\)/g,
+  (_, amountExpr) =>
+    `Number(${amountExpr})<${minAmount}&&(${amountExpr}=${minAmount})`
+);
+
+const changed = body !== before;
+
+// Notify only after the target code was matched and actually modified.
+if (changed && typeof $notification !== "undefined") {
   $notification.post(
-    'CTExcel £1 Top-up',
-    'Patch applied',
-    'Minimum amount changed from £5 to £1.'
+    "CTExcel Top-up",
+    "Patch applied",
+    `Minimum amount changed from £5 to £${minAmount}.`
   );
 }
 
